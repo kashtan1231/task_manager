@@ -77,7 +77,7 @@ export default class BaseInput extends Vue {
   &__wrapper {
     display: flex;
     box-shadow: inset 0 0 0 1px $black;
-    border-radius: 4px;
+    border-radius: 8px;
   }
 
   &__field-input {
