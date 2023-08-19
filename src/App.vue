@@ -2,10 +2,10 @@
   <div id="app">
     <TheHeader />
     <div class="page">
-      <div v-for="task in tasksList" class="task" :key="task.name">
+      <div v-for="task in tasksList" class="task" @click="openModal(task.id)" :key="task.name">
         <h3 class="task__name">{{ task.name }}</h3>
 
-        <div class="task__notes">
+        <div v-if="task.notesList.length > 0" class="task__notes">
           <div v-for="note in task.notesList" class="note" :key="note.id">
             <img
               :src="require(`@/assets/${note.isMarked ? '' : 'un'}checked-icon.svg`)"
@@ -19,12 +19,12 @@
         <p class="task__description">{{ task.description }}</p>
       </div>
 
-      <div class="add-task" @click="openModal">
+      <div class="add-task" @click="openModal()">
         <img src="@/assets/add-icon.svg" class="add-task__icon" alt="add-icon" />
       </div>
     </div>
 
-    <Modal v-if="isModalOpened" @closeModal="closeModal" />
+    <Modal v-if="isModalOpened" @closeModal="closeModal" :task="neededTask" />
   </div>
 </template>
 
@@ -41,17 +41,43 @@ import { ITask } from './models'
   }
 })
 export default class App extends Vue {
+  public unSubscribe!: () => void
+
   isModalOpened = false
+  neededTask = {}
 
   get tasksList(): ITask[] {
     return this.$store.state.task.tasksList
   }
 
-  openModal() {
+  openModal(id = -1) {
+    if (id >= 0) {
+      this.neededTask = this.$store.state.task.tasksList[id]
+    }
+    document.documentElement.classList.add('no-scroll')
     this.isModalOpened = true
   }
   closeModal() {
+    this.neededTask = {}
+    document.documentElement.classList.remove('no-scroll')
     this.isModalOpened = false
+  }
+  synchronizeStateAndStore(): void {
+    this.unSubscribe = this.$store.subscribe((mutation, state: any) => {
+      localStorage.setItem('store', JSON.stringify({ ...state }))
+    })
+  }
+
+  created() {
+    this.$store.commit('initialiseStore')
+  }
+  mounted(): void {
+    this.synchronizeStateAndStore()
+  }
+  destroyed(): void {
+    if (this.unSubscribe) {
+      this.unSubscribe()
+    }
   }
 }
 </script>
@@ -71,7 +97,7 @@ export default class App extends Vue {
 
 .page {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 32px;
   min-height: 100vh;
   width: 100%;
@@ -140,6 +166,17 @@ export default class App extends Vue {
         }
       }
     }
+  }
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+@media screen and (max-width: 763px) {
+  .page {
+    padding-left: 16px;
+    padding-right: 16px;
   }
 }
 </style>

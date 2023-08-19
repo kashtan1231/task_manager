@@ -1,5 +1,5 @@
 <template>
-  <button class="base-button">
+  <button class="base-button" :disabled="isDisabled">
     {{ text }}
   </button>
 </template>
@@ -9,6 +9,7 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class BaseButton extends Vue {
+  @Prop({ default: false }) isDisabled!: boolean
   @Prop({ default: '' }) text!: string
 }
 </script>
@@ -26,6 +27,12 @@ export default class BaseButton extends Vue {
 
   &:hover {
     background-color: $white;
+  }
+
+  &:disabled {
+    background-color: $blue-light;
+    box-shadow: none;
+    cursor: default;
   }
 }
 </style>

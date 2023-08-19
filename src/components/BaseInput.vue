@@ -44,10 +44,6 @@ export default class BaseInput extends Vue {
   }
   onInput(event: Event): void {
     const target = event.target as HTMLInputElement
-    const regex = /[^0-9a-zA-Z]/u
-
-    target.value = target.value.replace(regex, '')
-
     this.$emit('input', target.value)
   }
 }

@@ -6,7 +6,7 @@
       @click="mark"
       alt="unchecked-icon"
     />
-    <input class="todo-item__input" v-model="localText" @blur="saveNote" type="text" />
+    <input class="todo-item__input" v-model="localText" @blur="saveNote" type="text" ref="input" />
 
     <img
       src="@/assets/delete-icon.svg"
@@ -22,6 +22,10 @@ import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export default class TodoItem extends Vue {
+  $refs!: {
+    input: HTMLElement
+  }
+
   @Prop({ default: false }) isMarked!: boolean
   @Prop({ default: '' }) text!: string
   @Prop({ default: null }) id!: number
@@ -41,6 +45,9 @@ export default class TodoItem extends Vue {
 
   created(): void {
     this.localText = this.text
+  }
+  mounted() {
+    this.$refs.input.focus()
   }
 }
 </script>
