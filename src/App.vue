@@ -2,7 +2,7 @@
   <div id="app">
     <TheHeader />
     <div class="page">
-      <div v-for="task in tasksList" class="task" @click="openModal(task.id)" :key="task.name">
+      <div v-for="task in tasksList" class="task" @click="openModal(task.id)" :key="task.id">
         <h3 class="task__name">{{ task.name }}</h3>
 
         <div v-if="task.notesList.length > 0" class="task__notes">
@@ -24,7 +24,9 @@
       </div>
     </div>
 
-    <Modal v-if="isModalOpened" @closeModal="closeModal" :task="neededTask" />
+    <Transition name="bounce">
+      <Modal v-if="isModalOpened" @closeModal="closeModal" :task="neededTask" />
+    </Transition>
   </div>
 </template>
 
@@ -177,6 +179,21 @@ export default class App extends Vue {
   .page {
     padding-left: 16px;
     padding-right: 16px;
+  }
+}
+
+.bounce-enter {
+  animation: bounce-in 0.2s;
+}
+.bounce-leave-active {
+  animation: bounce-in 0.2s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 </style>

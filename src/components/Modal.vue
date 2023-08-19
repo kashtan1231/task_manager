@@ -5,21 +5,19 @@
 
       <BaseInput v-model="name" class="modal__input" label="Name*" />
 
-      <div class="todo-list">
-        <transition-group name="bounce" tag="div">
-          <TodoItem
-            v-for="item of notesList"
-            @save="saveNote"
-            @delete="deleteNote"
-            @mark="markNote"
-            :key="item.id"
-            :text="item.text"
-            :isMarked="item.isMarked"
-            :id="item.id"
-            class="todo-list__item"
-          />
-        </transition-group>
-      </div>
+      <transition-group name="bounce" tag="div" class="todo-list">
+        <TodoItem
+          v-for="item of notesList"
+          @save="saveNote"
+          @delete="deleteNote"
+          @mark="markNote"
+          :key="item.id"
+          :text="item.text"
+          :isMarked="item.isMarked"
+          :id="item.id"
+          class="todo-list__item"
+        />
+      </transition-group>
 
       <BaseInput
         v-model="description"
@@ -27,18 +25,19 @@
         :isTextArea="true"
         label="Description"
       />
+      <Transition name="slide-fade" mode="out-in">
+        <div class="modal__buttons" v-if="!isDeleteStage" :key="1">
+          <BaseButton @click.native="addNote" text="Add note" />
+          <BaseButton class="modal__buttons-delete" @click.native="tryToDelete" text="Delete" />
+          <BaseButton @click.native="saveTask" :isDisabled="isSaveButtonDisabled" text="Save" />
+        </div>
 
-      <div class="modal__buttons" v-if="!isDeleteStage">
-        <BaseButton @click.native="addNote" text="Add note" />
-        <BaseButton class="modal__buttons-delete" @click.native="tryToDelete" text="Delete" />
-        <BaseButton @click.native="saveTask" :isDisabled="isSaveButtonDisabled" text="Save" />
-      </div>
-
-      <div class="modal__buttons" v-else>
-        <p class="modal__buttons-text">Are you sure you want to delete the task?</p>
-        <BaseButton @click.native="noDelete" text="No" />
-        <BaseButton class="modal__buttons-delete" @click.native="deleteTask" text="Yes" />
-      </div>
+        <div v-else class="modal__buttons" :key="2">
+          <p class="modal__buttons-text">Are you sure you want to delete the task?</p>
+          <BaseButton @click.native="noDelete" text="No" />
+          <BaseButton class="modal__buttons-delete" @click.native="deleteTask" text="Yes" />
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
@@ -124,27 +123,27 @@ export default class Modal extends Vue {
 
 <style lang="scss">
 .modal {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   z-index: 100;
-  width: 100vw;
-  height: 100vh;
+  height: 100%;
+  width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  padding: 16px;
   background-color: rgba($blue-dark, 0.5);
 
   &__wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 520px;
+    display: flex;
+    flex-direction: column;
+    max-width: 520px;
+    width: 100%;
     padding: 16px;
     background-color: $white;
     box-shadow: 0 0 17px 0px rgba($black, 0.5);
     border-radius: 8px;
-    transform: translate(-50%, -50%);
   }
 
   &__title {
@@ -199,5 +198,23 @@ export default class Modal extends Vue {
   100% {
     transform: scale(1);
   }
+}
+
+.slide-fade-enter-active {
+  transition: all 0.3s ease-out;
+}
+
+.slide-fade-leave-active {
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
+}
+
+.slide-fade-leave-to {
+  transform: translateX(20px);
+  opacity: 0;
+}
+
+.slide-fade-enter {
+  transform: translateX(-20px);
+  opacity: 0;
 }
 </style>

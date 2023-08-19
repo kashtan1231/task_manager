@@ -59,6 +59,7 @@ export default class TodoItem extends Vue {
   width: 100%;
   padding: 8px;
   border-radius: 8px;
+  box-shadow: inset 0 0 0 1px $blue;
   transition-duration: 0.2s;
 
   &:hover {
