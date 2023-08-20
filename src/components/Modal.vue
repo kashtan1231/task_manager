@@ -8,14 +8,15 @@
       <transition-group name="bounce" tag="div" class="todo-list">
         <TodoItem
           v-for="item of notesList"
+          class="todo-list__item"
           @save="saveNote"
           @delete="deleteNote"
           @mark="markNote"
           :key="item.id"
           :text="item.text"
           :isMarked="item.isMarked"
+          :isAutoFocused="isAutoFocused"
           :id="item.id"
-          class="todo-list__item"
         />
       </transition-group>
 
@@ -26,7 +27,7 @@
         label="Description"
       />
       <Transition name="slide-fade" mode="out-in">
-        <div class="modal__buttons" v-if="!isDeleteStage" :key="1">
+        <div v-if="!isDeleteStage" class="modal__buttons" :key="1">
           <BaseButton @click.native="addNote" text="Add note" />
           <BaseButton class="modal__buttons-delete" @click.native="tryToDelete" text="Delete" />
           <BaseButton @click.native="saveTask" :isDisabled="isSaveButtonDisabled" text="Save" />
@@ -56,6 +57,7 @@ export default class Modal extends Vue {
   @Prop({ default: {} }) task!: any
 
   isDeleteStage = false
+  isAutoFocused = false
   name = ''
   description = ''
   notesList: INote[] = []
@@ -71,6 +73,7 @@ export default class Modal extends Vue {
     this.$emit('closeModal')
   }
   addNote(): void {
+    this.isAutoFocused = true
     this.notesList.push({ text: '', isMarked: false, id: this.notesList.length })
   }
   saveNote(payload: any): void {

@@ -27,6 +27,7 @@ export default class TodoItem extends Vue {
   }
 
   @Prop({ default: false }) isMarked!: boolean
+  @Prop({ default: false }) isAutoFocused!: boolean
   @Prop({ default: '' }) text!: string
   @Prop({ default: null }) id!: number
 
@@ -47,7 +48,7 @@ export default class TodoItem extends Vue {
     this.localText = this.text
   }
   mounted() {
-    this.$refs.input.focus()
+    if (this.isAutoFocused) this.$refs.input.focus()
   }
 }
 </script>

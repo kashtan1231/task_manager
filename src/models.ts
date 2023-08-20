@@ -8,5 +8,5 @@ export interface ITask {
   name: string
   description: string
   id: number
-  notesList: INote
+  notesList: INote[]
 }
